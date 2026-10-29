@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f9edf3">
+  <title>人生ゲーム｜ドクダミすごろく</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="game-page life-page">
+  <header class="game-header">
+    <a class="back-link" href="index.html">← タイトルへ</a>
+    <div><p class="eyebrow">LIFE & LUCK MODE</p><h1>人生ゲーム</h1></div>
+    <div class="player-count">🎀 のんびりプレイ</div>
+  </header>
+  <main class="game-layout">
+    <section class="board-panel">
+      <div class="board-heading"><div><p class="eyebrow">YOUR STORY</p><h2>気ままな人生ロード</h2></div><span class="board-stamp">✨ LIFE GAME</span></div>
+      <div class="board" id="lifeBoard" aria-label="人生ゲーム盤面"></div>
+      <div class="board-legend"><span>🌱 START</span><span>🎁 EVENT</span><span>🏁 GOAL</span></div>
+    </section>
+    <aside class="control-panel">
+      <section class="dice-card">
+        <p class="eyebrow">ROLL & GO</p><h2>次は何が起きる？</h2>
+        <div class="dice-stage"><div class="dice" id="lifeDice" aria-label="サイコロの目">⚀</div></div>
+        <button class="primary-button" id="lifeRollButton">🎲 サイコロを振る</button>
+        <p class="small-note" id="lifeTurnStatus" aria-live="polite">人生は運しだい、のんびり行こう。</p>
+      </section>
+      <section class="event-card" aria-live="polite">
+        <span class="event-kicker">LIFE EVENT</span><h2 id="lifeEventTitle">新しい人生のスタート！</h2>
+        <p id="lifeEventText">サイコロを振って、いろんなイベントに出会おう。</p>
+      </section>
+      <section class="mini-status"><span>現在地</span><strong id="lifePositionText">START / 0</strong><span class="mini-progress"><i id="lifeProgressBar"></i></span></section>
+    </aside>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
