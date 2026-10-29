@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#edf4e7">
+  <title>就活すごろく｜ドクダミすごろく</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="game-page job-page">
+  <header class="game-header">
+    <a class="back-link" href="index.html">← タイトルへ</a>
+    <div><p class="eyebrow">MISSION MODE</p><h1>就活すごろく</h1></div>
+    <div class="player-count"><span class="leaf-dot"></span> ドクダミ繁殖中</div>
+  </header>
+  <main class="game-layout">
+    <section class="board-panel">
+      <div class="board-heading"><div><p class="eyebrow">THE CAREER PATH</p><h2>社会人への道（？）</h2></div><span class="board-stamp">🌿 DOKUDAMI</span></div>
+      <div class="board" id="jobBoard" aria-label="すごろく盤面"></div>
+      <div class="board-legend"><span>🌱 START</span><span>🌼 EVENT</span><span>🏁 GOAL</span></div>
+    </section>
+    <aside class="control-panel">
+      <section class="dice-card">
+        <p class="eyebrow">YOUR TURN</p>
+        <h2>サイコロを振ろう</h2>
+        <div class="dice-stage"><div class="dice" id="dice" aria-label="サイコロの目">⚀</div></div>
+        <button class="primary-button" id="rollButton">🎲 サイコロを振る</button>
+        <p class="small-note" id="turnStatus" aria-live="polite">スタート地点から出発！</p>
+      </section>
+      <section class="event-card" id="eventCard" aria-live="polite">
+        <span class="event-kicker">CURRENT MISSION</span>
+        <h2 id="eventTitle">スタート！</h2>
+        <p id="eventText">サイコロを振って、ドクダミロードを進もう。</p>
+        <div id="eventActions"></div>
+      </section>
+      <section class="mini-status"><span>現在地</span><strong id="positionText">START / 0</strong><span class="mini-progress"><i id="progressBar"></i></span></section>
+    </aside>
+  </main>
+  <div class="modal-backdrop" id="rouletteModal" hidden>
+    <section class="roulette-modal" role="dialog" aria-modal="true" aria-labelledby="rouletteTitle">
+      <button class="modal-close" id="closeRoulette" aria-label="閉じる">×</button>
+      <p class="eyebrow">SUPPORT EVENT</p>
+      <h2 id="rouletteTitle">支援員に相談してみた！</h2>
+      <p>さて、結果は……？ ルーレットを回そう。</p>
+      <div class="roulette-wheel" id="rouletteWheel" aria-hidden="true"><span>🌼</span></div>
+      <button class="primary-button" id="spinButton">ルーレットを回す</button>
+      <div class="roulette-result" id="rouletteResult" aria-live="polite"></div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
