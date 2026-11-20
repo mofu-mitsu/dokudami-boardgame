@@ -11,13 +11,12 @@ body.ura-mode .board-cell.start-cell,body.ura-mode .board-cell.goal-cell{backgro
 .dokudami-svg{width:100%;height:auto;display:block}
 .action-button{border:0;border-radius:11px;background:var(--green);color:#fff;font-weight:700;padding:10px 14px;margin:0 8px 8px 0;box-shadow:0 3px 0 color-mix(in srgb,var(--green) 72%,#000)}
 .action-button.sub{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
-.logo-wrap{position:relative;display:inline-block}
+.logo-wrap{position:relative;display:inline-block;padding:30px 66px 26px;background:#fffaf0;border:2px solid #eee3c2;border-radius:46% 54% 52% 48%/62% 58% 42% 40%;box-shadow:0 16px 38px #3043341c}
 .logo-flower{position:absolute;width:clamp(44px,7vw,72px);z-index:2;filter:drop-shadow(0 4px 6px #30433422)}
-.logo-flower.lf1{left:-58px;top:-6px;transform:rotate(-10deg)}
-.logo-flower.lf2{right:-58px;top:-6px;transform:rotate(10deg) scaleX(-1)}
-.title-ribbon{display:inline-block;margin:2px 0 0;padding:8px 20px;border:1px solid #d9cda8;border-radius:999px;background:#fffdf7;color:#8a6d2f;font-size:.82rem;font-weight:800;letter-spacing:.06em;box-shadow:0 6px 18px #30433414}
+.logo-flower.lf1{left:-36px;top:-10px;transform:rotate(-10deg)}
+.logo-flower.lf2{right:-36px;top:-10px;transform:rotate(10deg) scaleX(-1)}
 .logo-title{background:linear-gradient(120deg,#365a3d 20%,#5d8a4e 55%,#a8873a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 3px 0 #dce8d4)}
-@media(max-width:540px){.logo-flower.lf1{left:-28px}.logo-flower.lf2{right:-28px}}
+@media(max-width:540px){.logo-flower.lf1{left:-28px}.logo-flower.lf2{right:-28px}.logo-wrap{padding:22px 36px 18px}}
 .board.spiral .board-cell{min-height:88px}
 .board-cell.flower-cell{background:linear-gradient(145deg,#f4f9ec,#e6f0da);padding:6px;justify-content:center}
 .board-cell.flower-cell .dokudami-svg{width:40px}
