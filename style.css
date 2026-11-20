@@ -36,6 +36,8 @@ body.ura-mode .board-cell.start-cell,body.ura-mode .board-cell.goal-cell{backgro
 body.ura-mode .board-cell.event-cell{background:linear-gradient(145deg,#f8eded,#f0dede);border-color:#d5a9b1}
 .board-cell.start-cell .cell-name,.board-cell.goal-cell .cell-name{font-size:.88rem;letter-spacing:.04em}
 .board-cell.start-cell .cell-emoji,.board-cell.goal-cell .cell-emoji{font-size:1.9rem}
+.logo-image-wrap{margin:6px auto 0;max-width:720px}
+.logo-image{display:block;width:100%;height:auto;border-radius:36px;border:1px solid #e3ead9;box-shadow:0 20px 44px #30433422}
 .route-svg{position:absolute;inset:0;z-index:0;pointer-events:none;width:100%;height:100%}
 .board-cell{z-index:1;transform:rotate(var(--tilt,0deg))}
 .board-cell.current-cell{transform:rotate(var(--tilt,0deg)) translateY(-3px)}
