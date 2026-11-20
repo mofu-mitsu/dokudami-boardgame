@@ -20,6 +20,11 @@
   const jobSpaces = [
     ["START","🌱","スタート"],["自己分析","🪞","好き・得意を考える"],["身だしなみ","👔","服装や髪型をチェック"],["面接準備","📝","質問への答えを考える"],["相談イベント","🌼","支援員に相談"],["自己PR","🎤","15秒で自己PR"],["求人票","🔎","大切にしたい条件"],["応援の言葉","💌","メンバーに一言"],["面接練習","🗣️","緊張した時の対策"],["GOAL","🏁","ゴール！"]
   ];
+  const uraMode = new URLSearchParams(location.search).get("mode")==="dokudami";
+  const jobSpacesUra = [
+    ["START","🌱","通所開始"],["自己分析","🪞","発表したら『干渉されたくないくせに』と勝手にラベリングされる"],["身だしなみ","👔","5分遅刻でグチグチ言われる。なお愛用PCは先客に奪われている"],["面接準備","📝","答えを考えたら『どこで話変わっちゃったんですかー？』の詰問ラッシュ"],["相談イベント","🌼","支援員に相談してみた。結果はルーレットしだい"],["自己PR","🎤","15秒で言い切ったら『逃げているように思えます』"],["求人票","🔎","条件を答えたら『タイピングスコアも報告しろ😊』と追加クエスト発生"],["応援の言葉","💌","一言言ったら『素敵な社会人になれますように』と薄く返される"],["面接練習","🗣️","緊張対策を答えたら『祝日も来い😊』の一言で緊張が戻る"],["GOAL","🏁","真のゴール"]
+  ];
+  const jobBoardSpaces = uraMode ? jobSpacesUra : jobSpaces;
   const lifeSpaces = [
     ["START","🌱","人生スタート"],["趣味","🎨","好きな趣味を満喫"],["おこづかい","🪙","臨時収入ゲット"],["お買い物","🛍️","欲しかったものを購入"],["休日","🌷","のんびり休息"],["新しい出会い","🐾","素敵な出会い"],["ラッキー","🍀","思いがけない幸運"],["お仕事","💼","新しいことに挑戦"],["ごほうび","🍰","自分にごほうび"],["GOAL","🏁","自分らしい人生！"]
   ];
@@ -42,17 +47,17 @@
     if($("eventActions"))$("eventActions").innerHTML=actions;
   }
   function updateJob() {
-    renderBoard("jobBoard",jobSpaces,job.position);
+    renderBoard("jobBoard",jobBoardSpaces,job.position);
     if($("positionText"))$("positionText").textContent=job.position===0?"START / 0":job.position===9?"GOAL / 9":`マス ${job.position} / 9`;
     if($("progressBar"))$("progressBar").style.width=(job.position/9*100)+"%";
   }
   const roulette=$("rouletteModal");
   function showRoulette(){if(roulette){roulette.hidden=false;$("rouletteResult").textContent="";$("rouletteResult").className="roulette-result";$("spinButton").disabled=false;}}
   function finishJobSpace() {
-    const s=jobSpaces[job.position];
+    const s=jobBoardSpaces[job.position];
     if(job.position===4){showRoulette();return;}
-    if(job.position===9){setJobEvent("ゴール！","お疲れ様でした！ 素敵な社会人になれますように！");$("rollButton").disabled=true;return;}
-    setJobEvent(s[0],s[2]+ "。自分のペースで考えてみよう。");
+    if(job.position===9){if(uraMode){setJobEvent("ゴール！（裏）","ドクダミ畑を卒業！ 真のゴールは内定先に入社すること。お疲れ様でした！");}else{setJobEvent("ゴール！","お疲れ様でした！ 素敵な社会人になれますように！");}$("rollButton").disabled=true;return;}
+    setJobEvent(s[0],uraMode?s[2]:s[2]+ "。自分のペースで考えてみよう。");
   }
   const rollButton=$("rollButton");
   if(rollButton)rollButton.addEventListener("click",()=>{
@@ -69,10 +74,11 @@
     setTimeout(()=>{
       const good=Math.random()<0.5;
       $("rouletteResult").className="roulette-result "+(good?"good":"bad");
-      $("rouletteResult").textContent=good?"✨ 悩みがスッキリ！ 2マスすすむ":"💥 ストレス倍増！ 3マス戻る";
+      $("rouletteResult").textContent=good?(uraMode?"✨ スッキリした（気がする）！ 2マスすすむ":"✨ 悩みがスッキリ！ 2マスすすむ"):(uraMode?"💥 ストレス倍増！ 怪文書が届いて3マス戻る":"💥 ストレス倍増！ 3マス戻る");
       if(good){job.position=Math.min(9,job.position+2);}else{job.position=Math.max(0,job.position-3);}
       updateJob();
-      setJobEvent(good?"相談してスッキリ！":"相談してストレス倍増！",good?"気持ちが軽くなった！ 2マスすすもう。":"おっと、ストレスが増えてしまった……3マス戻ろう。");
+      if(uraMode){setJobEvent(good?"相談してスッキリ…？":"相談してストレス倍増！",good?"気持ちが軽くなった（気がする）。2マスすすもう。ただし帰り際に講座の勧誘つき。":"『お母様に共有しました😊』の連絡つき。3マス戻ろう。");}
+      else{setJobEvent(good?"相談してスッキリ！":"相談してストレス倍増！",good?"気持ちが軽くなった！ 2マスすすもう。":"おっと、ストレスが増えてしまった……3マス戻ろう。");}
       if(job.position===9){$("rollButton").disabled=true;}
       else $("rollButton").disabled=false;
       if($("turnStatus"))$("turnStatus").textContent=good?"相談イベント：ラッキー！":"相談イベント：ドクダミ注意報！";
@@ -82,6 +88,25 @@
   });
   if($("closeRoulette"))$("closeRoulette").addEventListener("click",()=>{roulette.hidden=true;if(job.position<9&&rollButton)rollButton.disabled=false;});
   if(roulette)roulette.addEventListener("click",(e)=>{if(e.target===roulette){roulette.hidden=true;if(job.position<9&&rollButton)rollButton.disabled=false;}});
+  if(uraMode&&$("jobBoard")){
+    document.body.classList.add("ura-mode");
+    if($("rouletteTitle"))$("rouletteTitle").textContent="支援員に相談してみた！（裏）";
+    if($("rouletteLead"))$("rouletteLead").textContent="さて、現実は……？ ルーレットを回そう。";
+    const stamp=document.querySelector(".board-stamp");if(stamp)stamp.textContent="🌿 DOKUDAMI REALITY";
+    const pc=document.querySelector(".player-count");if(pc)pc.innerHTML="<span class=\"leaf-dot\"></span> ドクダミ満開";
+    setJobEvent("スタート！（裏）","ここは現実のドクダミ畑。サイコロを振って進もう。");
+  }
+  const resetButton=$("resetButton");
+  if(resetButton)resetButton.addEventListener("click",()=>{
+    if(job.busy)return;
+    job.position=0;updateJob();
+    if($("dice"))$("dice").textContent="⚀";
+    if($("turnStatus"))$("turnStatus").textContent="スタート地点から出発！";
+    if(uraMode){setJobEvent("スタート！（裏）","ここは現実のドクダミ畑。サイコロを振って進もう。");}
+    else{setJobEvent("スタート！","サイコロを振って、ドクダミロードを進もう。");}
+    if(rollButton)rollButton.disabled=false;
+    if(roulette)roulette.hidden=true;
+  });
   updateJob();
 
   const lifeButton=$("lifeRollButton");
@@ -90,6 +115,16 @@
     if(life.busy||life.position>=9)return;life.busy=true;lifeButton.disabled=true;
     const dice=$("lifeDice");dice.classList.remove("rolling");void dice.offsetWidth;dice.classList.add("rolling");
     let ticks=0;const timer=setInterval(()=>{dice.textContent=diceFaces[Math.floor(Math.random()*6)];ticks++;if(ticks>=8){clearInterval(timer);const n=Math.floor(Math.random()*6)+1;dice.textContent=diceFaces[n-1];life.position=Math.min(9,life.position+n);updateLife();const s=lifeSpaces[life.position];$("lifeEventTitle").textContent=s[0];$("lifeEventText").textContent=life.position===9?"ゴール！自分らしい人生を楽しもう！":s[2]+"！";$("lifeTurnStatus").textContent=`${n}マス進んだ！`;life.busy=false;lifeButton.disabled=life.position>=9;}},75);
+  });
+  const lifeResetButton=$("lifeResetButton");
+  if(lifeResetButton)lifeResetButton.addEventListener("click",()=>{
+    if(life.busy)return;
+    life.position=0;updateLife();
+    if($("lifeDice"))$("lifeDice").textContent="⚀";
+    if($("lifeEventTitle"))$("lifeEventTitle").textContent="新しい人生のスタート！";
+    if($("lifeEventText"))$("lifeEventText").textContent="サイコロを振って、いろんなイベントに出会おう。";
+    if($("lifeTurnStatus"))$("lifeTurnStatus").textContent="人生は運しだい、のんびり行こう。";
+    if(lifeButton)lifeButton.disabled=false;
   });
   updateLife();
 })();

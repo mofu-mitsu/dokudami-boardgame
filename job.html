@@ -26,6 +26,7 @@
         <div class="dice-stage"><div class="dice" id="dice" aria-label="サイコロの目">⚀</div></div>
         <button class="primary-button" id="rollButton">🎲 サイコロを振る</button>
         <p class="small-note" id="turnStatus" aria-live="polite">スタート地点から出発！</p>
+        <button class="ghost-button" id="resetButton" type="button">↩ 最初からやり直す</button>
       </section>
       <section class="event-card" id="eventCard" aria-live="polite">
         <span class="event-kicker">CURRENT MISSION</span>
@@ -41,7 +42,7 @@
       <button class="modal-close" id="closeRoulette" aria-label="閉じる">×</button>
       <p class="eyebrow">SUPPORT EVENT</p>
       <h2 id="rouletteTitle">支援員に相談してみた！</h2>
-      <p>さて、結果は……？ ルーレットを回そう。</p>
+      <p id="rouletteLead">さて、結果は……？ ルーレットを回そう。</p>
       <div class="roulette-wheel" id="rouletteWheel" aria-hidden="true"><span>🌼</span></div>
       <button class="primary-button" id="spinButton">ルーレットを回す</button>
       <div class="roulette-result" id="rouletteResult" aria-live="polite"></div>
