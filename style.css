@@ -11,17 +11,24 @@ body.ura-mode .board-cell.start-cell,body.ura-mode .board-cell.goal-cell{backgro
 .dokudami-svg{width:100%;height:auto;display:block}
 .action-button{border:0;border-radius:11px;background:var(--green);color:#fff;font-weight:700;padding:10px 14px;margin:0 8px 8px 0;box-shadow:0 3px 0 color-mix(in srgb,var(--green) 72%,#000)}
 .action-button.sub{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
-.logo-wrap{position:relative;display:inline-block;padding:46px 88px 40px}
-.logo-cloud{position:absolute;inset:0;width:100%;height:100%;z-index:0;filter:drop-shadow(0 16px 30px #30433422)}
-.logo-cloud path{fill:#fffaf0;fill-opacity:.85;stroke:#5d8a4e;stroke-width:3}
+.logo-wrap{position:relative;display:inline-block;padding:66px 112px 56px}
+.logo-cloud{position:absolute;inset:0;width:100%;height:100%;z-index:0;filter:drop-shadow(0 18px 30px #7da57455)}
+.logo-cloud path.cloud-outer{fill:url(#cloudGrad);fill-opacity:.94;stroke:#3f6b45;stroke-width:7}
+.logo-cloud path.cloud-inner{fill:none;stroke:#e8cf8f;stroke-width:3}
+.logo-flower.lf3{right:-16px;top:-32px;width:46px;transform:rotate(14deg)}
+.logo-flower.lf4{left:-12px;top:-30px;width:38px;transform:rotate(-24deg)}
+.logo-flower.lf5{left:15%;bottom:-24px;top:auto;width:36px;transform:rotate(165deg)}
+.logo-spark{position:absolute;color:#d9a83f;z-index:2;font-size:1rem;line-height:1}
+.logo-spark.s1{left:-24px;bottom:16px}
+.logo-spark.s2{right:-22px;bottom:30px;font-size:.75rem}
 .logo-title{position:relative;z-index:1}
-.board.zigzag{grid-template-columns:repeat(4,minmax(0,1fr))}
+.board.zigzag{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .board.zigzag .board-cell{min-height:94px}
 .logo-flower{position:absolute;width:clamp(44px,7vw,72px);z-index:2;filter:drop-shadow(0 4px 6px #30433422)}
 .logo-flower.lf1{left:-36px;top:-10px;transform:rotate(-10deg)}
 .logo-flower.lf2{right:-36px;top:-10px;transform:rotate(10deg) scaleX(-1)}
 .logo-title{background:linear-gradient(120deg,#365a3d 20%,#5d8a4e 55%,#a8873a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 3px 0 #dce8d4)}
-@media(max-width:540px){.logo-flower.lf1{left:-28px}.logo-flower.lf2{right:-28px}.logo-wrap{padding:32px 50px 28px}}
+@media(max-width:540px){.logo-flower.lf1{left:-28px}.logo-flower.lf2{right:-28px}.logo-wrap{padding:44px 58px 38px}}
 .board.spiral .board-cell{min-height:88px}
 .board-cell.flower-cell{background:linear-gradient(145deg,#f4f9ec,#e6f0da);padding:6px;justify-content:center}
 .board-cell.flower-cell .dokudami-svg{width:40px}

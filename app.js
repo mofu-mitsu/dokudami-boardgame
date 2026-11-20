@@ -88,7 +88,7 @@
       d+=` Q ${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`;
     }
     d+=` L ${pts[pts.length-1][0].toFixed(1)} ${pts[pts.length-1][1].toFixed(1)}`;
-    svg.innerHTML=`<path d="${d}" fill="none" stroke="#7da574" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" opacity="0.25"/><path d="${d}" fill="none" stroke="#fffdf7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" stroke-dasharray="0.1 17"/>`;
+    svg.innerHTML=`<path d="${d}" fill="none" stroke="#5f8a52" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/><path d="${d}" fill="none" stroke="#fffdf7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" stroke-dasharray="0.1 17"/>`;
   }
 
   const jobSpaces = [
