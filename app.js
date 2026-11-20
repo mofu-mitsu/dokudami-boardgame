@@ -43,7 +43,7 @@
   function sproutDokudami() {
     const layer=$("boardGarden");
     if(!layer) return;
-    if(layer.childElementCount>=26) return;
+    if(layer.childElementCount>=30) return;
     const el=document.createElement("div");
     el.className="board-sprout";
     el.innerHTML=dokudamiSvg();
@@ -51,6 +51,44 @@
     el.style.top=(Math.random()*90)+"%";
     el.style.setProperty("--s",(0.3+Math.random()*0.5).toFixed(2));
     layer.appendChild(el);
+  }
+  function seedDokudami() {
+    const layer=$("boardGarden");
+    if(!layer) return;
+    const spots=[[1,3],[90,2],[2,88],[91,86],[44,1],[58,93],[96,45],[0,50]];
+    spots.forEach((sp)=>{
+      const el=document.createElement("div");
+      el.className="board-sprout seed";
+      el.innerHTML=dokudamiSvg();
+      el.style.left=sp[0]+"%";
+      el.style.top=sp[1]+"%";
+      el.style.setProperty("--s",(0.4+Math.random()*0.35).toFixed(2));
+      layer.appendChild(el);
+    });
+  }
+  function drawRoute(board) {
+    if(!board) return;
+    const cells=board.querySelectorAll(".board-cell:not(.flower-cell)");
+    if(cells.length<2) return;
+    let svg=board.querySelector(".route-svg");
+    if(!svg){
+      svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+      svg.setAttribute("class","route-svg");
+      svg.setAttribute("aria-hidden","true");
+      board.insertBefore(svg, board.firstChild);
+    }
+    const br=board.getBoundingClientRect();
+    if(board.clientWidth===0) return;
+    svg.setAttribute("viewBox",`0 0 ${board.clientWidth} ${board.clientHeight}`);
+    const pts=[];
+    cells.forEach((c)=>{ const r=c.getBoundingClientRect(); pts.push([r.left-br.left+r.width/2, r.top-br.top+r.height/2]); });
+    let d=`M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for(let i=1;i<pts.length-1;i++){
+      const mx=(pts[i][0]+pts[i+1][0])/2, my=(pts[i][1]+pts[i+1][1])/2;
+      d+=` Q ${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`;
+    }
+    d+=` L ${pts[pts.length-1][0].toFixed(1)} ${pts[pts.length-1][1].toFixed(1)}`;
+    svg.innerHTML=`<path d="${d}" fill="none" stroke="#7da574" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" opacity="0.25"/><path d="${d}" fill="none" stroke="#fffdf7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.55" stroke-dasharray="0.1 17"/>`;
   }
 
   const jobSpaces = [
@@ -118,6 +156,7 @@
       cell.className="board-cell"+(i===0?" start-cell":"")+(i===spaces.length-1?" goal-cell":"")+(i===position?" current-cell":"")+(space[3]?" event-cell":"");
       cell.innerHTML=`<span class="cell-num">${String(i).padStart(2,"0")}</span><span class="cell-emoji">${space[1]}</span><span class="cell-name">${space[0]}</span>`;
       cell.title=space[2];
+      cell.style.setProperty("--tilt",(((i%2===0)?1:-1)*(0.7+(i%3)*0.35)).toFixed(2)+"deg");
       if(path&&path[i]){cell.style.gridRowStart=path[i][0];cell.style.gridColumnStart=path[i][1];}
       board.appendChild(cell);
     });
@@ -130,6 +169,7 @@
         board.appendChild(patch);
       });
     }
+    requestAnimationFrame(()=>drawRoute(board));
   }
   const job = {position:0,busy:false,skip:false};
   const life = {position:0,busy:false};
@@ -141,17 +181,29 @@
     if($("missionBarTitle"))$("missionBarTitle").textContent=title;
     if($("missionBarText"))$("missionBarText").textContent=text;
   }
-  function bindJobActions() {
-    const box=$("eventActions"); if(!box)return;
+  const missionModal=$("missionModal");
+  function openMission(title,text,actionsHtml) {
+    if(!missionModal){return;}
+    if($("missionTitle"))$("missionTitle").textContent=title;
+    if($("missionText"))$("missionText").textContent=text;
+    const box=$("missionActions");
+    if(box){box.innerHTML=actionsHtml||"";bindJobActions(box);}
+    missionModal.hidden=false;
+  }
+  function closeMissionModal() {
+    if(missionModal)missionModal.hidden=true;
+    if($("rollButton")&&job.position<jobLast())$("rollButton").disabled=false;
+  }
+  function bindJobActions(box) {
+    if(!box)return;
     box.querySelectorAll("button[data-move]").forEach((btn)=>{
       btn.addEventListener("click",()=>{
         const d=parseInt(btn.getAttribute("data-move"),10)||0;
-        box.innerHTML="";
+        if(missionModal)missionModal.hidden=true;
         job.position=Math.max(0,Math.min(jobLast(),job.position+d));
         updateJob();
         if($("turnStatus"))$("turnStatus").textContent=d>0?`イベントで ${d}マス進んだ！`:`イベントで ${-d}マス戻った……`;
         finishJobSpace();
-        if(job.position<jobLast()&&$("rollButton"))$("rollButton").disabled=false;
       });
     });
   }
@@ -163,20 +215,24 @@
   }
   const roulette=$("rouletteModal");
   function showRoulette(){if(roulette){roulette.hidden=false;$("rouletteResult").textContent="";$("rouletteResult").className="roulette-result";$("spinButton").disabled=false;}}
+  function goalTexts() {
+    return uraMode?["ゴール！（裏）","ドクダミ畑を卒業！ 真のゴールは内定先に入社すること。お疲れ様でした！"]:["ゴール！","お疲れ様でした！ 素敵な社会人になれますように！"];
+  }
   function goalJobEvent() {
-    if(uraMode){setJobEvent("ゴール！（裏）","ドクダミ畑を卒業！ 真のゴールは内定先に入社すること。お疲れ様でした！");}
-    else{setJobEvent("ゴール！","お疲れ様でした！ 素敵な社会人になれますように！");}
+    const g=goalTexts();
+    setJobEvent(g[0],g[1]);
     if($("rollButton"))$("rollButton").disabled=true;
   }
   function finishJobSpace() {
     const s=jobBoardSpaces[job.position];
     const eff=s[3];
-    if(job.position===jobLast()){goalJobEvent();return;}
-    if(eff==="roulette"){showRoulette();return;}
-    if(eff==="skip"){job.skip=true;setJobEvent(s[0],s[2]);if($("turnStatus"))$("turnStatus").textContent="ハプニング！ 次のターンは1回休み";return;}
-    if(eff==="plusChoice"){setJobEvent(s[0],s[2],`<button class="action-button" data-move="1" type="button">理由を言えた！ 1マスすすむ</button>`);bindJobActions();return;}
-    if(eff==="suitChoice"){setJobEvent(s[0],s[2],`<button class="action-button" data-move="1" type="button">はい（+1マス）</button><button class="action-button sub" data-move="-1" type="button">いいえ（-1マス）</button>`);bindJobActions();return;}
+    if(job.position===jobLast()){goalJobEvent();const g=goalTexts();openMission(g[0],g[1]);return;}
+    if(eff==="roulette"){setJobEvent(s[0],s[2]);showRoulette();return;}
+    if(eff==="skip"){job.skip=true;setJobEvent(s[0],s[2]);if($("turnStatus"))$("turnStatus").textContent="ハプニング！ 次のターンは1回休み";openMission(s[0],s[2]);return;}
+    if(eff==="plusChoice"){setJobEvent(s[0],s[2]);openMission(s[0],s[2],`<button class="action-button" data-move="1" type="button">理由を言えた！ 1マスすすむ</button>`);return;}
+    if(eff==="suitChoice"){setJobEvent(s[0],s[2]);openMission(s[0],s[2],`<button class="action-button" data-move="1" type="button">はい（+1マス）</button><button class="action-button sub" data-move="-1" type="button">いいえ（-1マス）</button>`);return;}
     setJobEvent(s[0],s[2]);
+    openMission(s[0],s[2]);
   }
   const rollButton=$("rollButton");
   buildDice($("dice"));
@@ -185,12 +241,14 @@
     if(job.skip){
       job.skip=false;
       sproutDokudami();
-      setJobEvent("1回休み",uraMode?"休んでいる間にもドクダミは育つ。次のターンから再開。":"ハプニングの余波で、このターンはお休み。次のターンから再開！");
+      const t="1回休み";
+      const x=uraMode?"休んでいる間にもドクダミは育つ。次のターンから再開。":"ハプニングの余波で、このターンはお休み。次のターンから再開！";
+      setJobEvent(t,x);
       if($("turnStatus"))$("turnStatus").textContent="1回休みでやり過ごした";
+      openMission(t,x);
       return;
     }
     job.busy=true;rollButton.disabled=true;
-    if($("eventActions"))$("eventActions").innerHTML="";
     const n=Math.floor(Math.random()*6)+1;
     tumbleDice($("dice"),n,()=>{
       const raw=job.position+n;
@@ -229,6 +287,8 @@
   });
   if($("closeRoulette"))$("closeRoulette").addEventListener("click",()=>{roulette.hidden=true;if(job.position<jobLast()&&rollButton)rollButton.disabled=false;});
   if(roulette)roulette.addEventListener("click",(e)=>{if(e.target===roulette){roulette.hidden=true;if(job.position<jobLast()&&rollButton)rollButton.disabled=false;}});
+  if($("closeMission"))$("closeMission").addEventListener("click",closeMissionModal);
+  if(missionModal)missionModal.addEventListener("click",(e)=>{if(e.target===missionModal)closeMissionModal();});
   if(uraMode&&$("jobBoard")){
     document.body.classList.add("ura-mode");
     if($("rouletteTitle"))$("rouletteTitle").textContent="支援員に相談してみた！（裏）";
@@ -243,7 +303,8 @@
     job.position=0;job.skip=false;updateJob();
     const d=$("dice");if(d)d.style.transform=diceTransforms[0];
     if($("turnStatus"))$("turnStatus").textContent="スタート地点から出発！";
-    const g=$("boardGarden");if(g)g.innerHTML="";
+    const g=$("boardGarden");if(g){g.innerHTML="";seedDokudami();}
+    if(missionModal)missionModal.hidden=true;
     if(uraMode){setJobEvent("スタート！（裏）","ここは現実のドクダミ畑。サイコロを振って進もう。");}
     else{setJobEvent("スタート！","サイコロを振って、ドクダミロードを進もう。");}
     if(rollButton)rollButton.disabled=false;
@@ -253,6 +314,19 @@
 
   const lifeButton=$("lifeRollButton");
   buildDice($("lifeDice"));
+  const lifeModal=$("lifeMissionModal");
+  function openLifeMission(title,text) {
+    if(!lifeModal)return;
+    if($("lifeMissionTitle"))$("lifeMissionTitle").textContent=title;
+    if($("lifeMissionText"))$("lifeMissionText").textContent=text;
+    lifeModal.hidden=false;
+  }
+  function closeLifeMissionModal() {
+    if(lifeModal)lifeModal.hidden=true;
+    if(lifeButton)lifeButton.disabled=life.position>=9;
+  }
+  if($("closeLifeMission"))$("closeLifeMission").addEventListener("click",closeLifeMissionModal);
+  if(lifeModal)lifeModal.addEventListener("click",(e)=>{if(e.target===lifeModal)closeLifeMissionModal();});
   function updateLife(){renderBoard("lifeBoard",lifeSpaces,life.position,lifePath);if($("lifePositionText"))$("lifePositionText").textContent=life.position===0?"START / 0":life.position===9?"GOAL / 9":`マス ${life.position} / 9`;if($("lifeProgressBar"))$("lifeProgressBar").style.width=(life.position/9*100)+"%";}
   if(lifeButton)lifeButton.addEventListener("click",()=>{
     if(life.busy||life.position>=9)return;life.busy=true;lifeButton.disabled=true;
@@ -265,12 +339,15 @@
       updateLife();
       sproutDokudami();
       const s=lifeSpaces[life.position];
+      const evText=life.position===9?"ゴール！自分らしい人生を楽しもう！":s[2]+"！";
       $("lifeEventTitle").textContent=s[0];
-      $("lifeEventText").textContent=life.position===9?"ゴール！自分らしい人生を楽しもう！":s[2]+"！";
+      $("lifeEventText").textContent=evText;
       if($("lifeMissionBarTitle"))$("lifeMissionBarTitle").textContent=s[0];
-      if($("lifeMissionBarText"))$("lifeMissionBarText").textContent=$("lifeEventText").textContent;
+      if($("lifeMissionBarText"))$("lifeMissionBarText").textContent=evText;
       $("lifeTurnStatus").textContent=bounced?`${n}が出た！ ゴールを行き過ぎて ${raw-landed}マス戻った`:`${n}マス進んだ！`;
       life.busy=false;lifeButton.disabled=life.position>=9;
+      openLifeMission(s[0],evText);
+      if(life.position<9)lifeButton.disabled=true;
     });
   });
   const lifeResetButton=$("lifeResetButton");
@@ -283,8 +360,18 @@
     if($("lifeMissionBarTitle"))$("lifeMissionBarTitle").textContent="新しい人生のスタート！";
     if($("lifeMissionBarText"))$("lifeMissionBarText").textContent="サイコロを振って、いろんなイベントに出会おう。";
     if($("lifeTurnStatus"))$("lifeTurnStatus").textContent="人生は運しだい、のんびり行こう。";
-    const g=$("boardGarden");if(g)g.innerHTML="";
+    const g=$("boardGarden");if(g){g.innerHTML="";seedDokudami();}
+    if(lifeModal)lifeModal.hidden=true;
     if(lifeButton)lifeButton.disabled=false;
   });
   updateLife();
+  seedDokudami();
+  window.addEventListener("resize",()=>{
+    drawRoute($("jobBoard"));
+    drawRoute($("lifeBoard"));
+  });
+  window.addEventListener("load",()=>{
+    drawRoute($("jobBoard"));
+    drawRoute($("lifeBoard"));
+  });
 })();
