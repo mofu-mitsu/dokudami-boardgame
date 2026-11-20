@@ -45,6 +45,16 @@
       <button class="primary-button" id="closeLifeMission" type="button">すすむ</button>
     </section>
   </div>
+  <button class="dice-fab" id="diceFab" type="button" aria-label="サイコロを開く">🎲</button>
+  <div class="modal-backdrop" id="diceModal" hidden>
+    <section class="roulette-modal dice-modal" role="dialog" aria-modal="true" aria-labelledby="diceModalTitle">
+      <button class="modal-close" id="closeDiceModal" type="button" aria-label="閉じる">×</button>
+      <p class="eyebrow">DICE</p>
+      <h2 id="diceModalTitle">サイコロ</h2>
+      <div class="dice-stage big"><div class="dice-scene big"><div class="dice3d" id="modalDice"></div></div></div>
+      <button class="primary-button" id="modalRollButton" type="button">サイコロを振る</button>
+    </section>
+  </div>
   <script src="app.js"></script>
 </body>
 </html>

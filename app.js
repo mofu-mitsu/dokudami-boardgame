@@ -146,7 +146,7 @@
   const lifeSpaces = [
     ["START","🌱","人生スタート"],["趣味","🎨","好きな趣味を満喫"],["おこづかい","🪙","臨時収入ゲット"],["お買い物","🛍️","欲しかったものを購入"],["休日","🌷","のんびり休息"],["新しい出会い","🐾","素敵な出会い"],["ラッキー","🍀","思いがけない幸運"],["お仕事","💼","新しいことに挑戦"],["ごほうび","🍰","自分にごほうび"],["GOAL","🏁","自分らしい人生！"]
   ];
-  const jobPath = [[6,1],[6,2],[6,3],[6,4],[5,4],[5,3],[5,2],[5,1],[4,1],[4,2],[4,3],[4,4],[3,4],[3,3],[3,2],[3,1],[2,1],[2,2],[2,3],[2,4],[1,4],[1,3],[1,2]];
+  const jobPath = [[8,1],[8,2],[8,3],[8,4],[7,4],[6,4],[6,3],[6,2],[6,1],[5,1],[4,1],[4,2],[4,3],[4,4],[3,4],[2,4],[2,3],[2,2],[2,1],[1,1],[1,2],[1,3],[1,4]];
   const lifePath = [[1,1],[1,2],[1,3],[1,4],[1,5],[2,5],[2,4],[2,3],[2,2],[2,1]];
   function renderBoard(id, spaces, position, path) {
     const board=$(id); if(!board)return;
@@ -160,14 +160,21 @@
       if(path&&path[i]){cell.style.gridRowStart=path[i][0];cell.style.gridColumnStart=path[i][1];}
       board.appendChild(cell);
     });
-    if(id==="jobBoard"){
-      [[1,1]].forEach((pos)=>{
-        const patch=document.createElement("div");
-        patch.className="board-cell flower-cell";
-        patch.style.gridRowStart=pos[0];patch.style.gridColumnStart=pos[1];
-        patch.innerHTML=dokudamiSvg();
-        board.appendChild(patch);
-      });
+    if(id==="jobBoard"&&path){
+      const occupied={};
+      path.forEach((p)=>{occupied[p[0]+","+p[1]]=true;});
+      const maxRow=Math.max.apply(null,path.map((p)=>p[0]));
+      const maxCol=Math.max.apply(null,path.map((p)=>p[1]));
+      for(let r=1;r<=maxRow;r++){
+        for(let c=1;c<=maxCol;c++){
+          if(occupied[r+","+c])continue;
+          const patch=document.createElement("div");
+          patch.className="board-cell flower-cell";
+          patch.style.gridRowStart=r;patch.style.gridColumnStart=c;
+          patch.innerHTML=dokudamiSvg();
+          board.appendChild(patch);
+        }
+      }
     }
     requestAnimationFrame(()=>drawRoute(board));
   }
@@ -236,11 +243,13 @@
   }
   const rollButton=$("rollButton");
   buildDice($("dice"));
-  if(rollButton)rollButton.addEventListener("click",()=>{
+  buildDice($("modalDice"));
+  function rollJobWith(diceEl, after) {
     if(job.busy||job.position>=jobLast())return;
     if(job.skip){
       job.skip=false;
       sproutDokudami();
+      if(after)after();
       const t="1回休み";
       const x=uraMode?"休んでいる間にもドクダミは育つ。次のターンから再開。":"ハプニングの余波で、このターンはお休み。次のターンから再開！";
       setJobEvent(t,x);
@@ -248,9 +257,9 @@
       openMission(t,x);
       return;
     }
-    job.busy=true;rollButton.disabled=true;
+    job.busy=true;if(rollButton)rollButton.disabled=true;
     const n=Math.floor(Math.random()*6)+1;
-    tumbleDice($("dice"),n,()=>{
+    tumbleDice(diceEl,n,()=>{
       const raw=job.position+n;
       const landed=bounceBack(raw,jobLast());
       const bounced=landed!==raw;
@@ -258,11 +267,13 @@
       updateJob();
       sproutDokudami();
       if($("turnStatus"))$("turnStatus").textContent=bounced?`${n}が出た！ ゴールを行き過ぎて ${raw-landed}マス戻った`:`${n}マス進んだ！`;
+      if(after)after();
       finishJobSpace();
       job.busy=false;
-      if(job.position<jobLast())rollButton.disabled=false;
+      if(job.position<jobLast()&&rollButton)rollButton.disabled=false;
     });
-  });
+  }
+  if(rollButton)rollButton.addEventListener("click",()=>rollJobWith($("dice"),null));
   const spinButton=$("spinButton");
   if(spinButton)spinButton.addEventListener("click",()=>{
     spinButton.disabled=true;
@@ -328,10 +339,10 @@
   if($("closeLifeMission"))$("closeLifeMission").addEventListener("click",closeLifeMissionModal);
   if(lifeModal)lifeModal.addEventListener("click",(e)=>{if(e.target===lifeModal)closeLifeMissionModal();});
   function updateLife(){renderBoard("lifeBoard",lifeSpaces,life.position,lifePath);if($("lifePositionText"))$("lifePositionText").textContent=life.position===0?"START / 0":life.position===9?"GOAL / 9":`マス ${life.position} / 9`;if($("lifeProgressBar"))$("lifeProgressBar").style.width=(life.position/9*100)+"%";}
-  if(lifeButton)lifeButton.addEventListener("click",()=>{
-    if(life.busy||life.position>=9)return;life.busy=true;lifeButton.disabled=true;
+  function rollLifeWith(diceEl, after) {
+    if(life.busy||life.position>=9)return;life.busy=true;if(lifeButton)lifeButton.disabled=true;
     const n=Math.floor(Math.random()*6)+1;
-    tumbleDice($("lifeDice"),n,()=>{
+    tumbleDice(diceEl,n,()=>{
       const raw=life.position+n;
       const landed=bounceBack(raw,9);
       const bounced=landed!==raw;
@@ -345,11 +356,12 @@
       if($("lifeMissionBarTitle"))$("lifeMissionBarTitle").textContent=s[0];
       if($("lifeMissionBarText"))$("lifeMissionBarText").textContent=evText;
       $("lifeTurnStatus").textContent=bounced?`${n}が出た！ ゴールを行き過ぎて ${raw-landed}マス戻った`:`${n}マス進んだ！`;
-      life.busy=false;lifeButton.disabled=life.position>=9;
+      life.busy=false;if(lifeButton)lifeButton.disabled=true;
+      if(after)after();
       openLifeMission(s[0],evText);
-      if(life.position<9)lifeButton.disabled=true;
     });
-  });
+  }
+  if(lifeButton)lifeButton.addEventListener("click",()=>rollLifeWith($("lifeDice"),null));
   const lifeResetButton=$("lifeResetButton");
   if(lifeResetButton)lifeResetButton.addEventListener("click",()=>{
     if(life.busy)return;
@@ -365,6 +377,16 @@
     if(lifeButton)lifeButton.disabled=false;
   });
   updateLife();
+  const diceModal=$("diceModal");
+  function openDiceModal(){if(diceModal)diceModal.hidden=false;}
+  function closeDiceModalFn(){if(diceModal)diceModal.hidden=true;}
+  if($("diceFab"))$("diceFab").addEventListener("click",openDiceModal);
+  if($("closeDiceModal"))$("closeDiceModal").addEventListener("click",closeDiceModalFn);
+  if(diceModal)diceModal.addEventListener("click",(e)=>{if(e.target===diceModal)closeDiceModalFn();});
+  if($("modalRollButton"))$("modalRollButton").addEventListener("click",()=>{
+    if($("rollButton"))rollJobWith($("modalDice"),closeDiceModalFn);
+    else if($("lifeRollButton"))rollLifeWith($("modalDice"),closeDiceModalFn);
+  });
   seedDokudami();
   window.addEventListener("resize",()=>{
     drawRoute($("jobBoard"));

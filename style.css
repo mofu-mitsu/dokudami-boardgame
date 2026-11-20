@@ -11,7 +11,7 @@ body.ura-mode .board-cell.start-cell,body.ura-mode .board-cell.goal-cell{backgro
 .dokudami-svg{width:100%;height:auto;display:block}
 .action-button{border:0;border-radius:11px;background:var(--green);color:#fff;font-weight:700;padding:10px 14px;margin:0 8px 8px 0;box-shadow:0 3px 0 color-mix(in srgb,var(--green) 72%,#000)}
 .action-button.sub{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
-.logo-wrap{position:relative;display:inline-block;padding:66px 112px 56px}
+.logo-wrap{position:relative;display:inline-block;padding:88px 148px 74px}
 .logo-cloud{position:absolute;inset:0;width:100%;height:100%;z-index:0;filter:drop-shadow(0 18px 30px #7da57455)}
 .logo-cloud path.cloud-outer{fill:url(#cloudGrad);fill-opacity:.94;stroke:#3f6b45;stroke-width:7}
 .logo-cloud path.cloud-inner{fill:none;stroke:#e8cf8f;stroke-width:3}
@@ -28,7 +28,7 @@ body.ura-mode .board-cell.start-cell,body.ura-mode .board-cell.goal-cell{backgro
 .logo-flower.lf1{left:-36px;top:-10px;transform:rotate(-10deg)}
 .logo-flower.lf2{right:-36px;top:-10px;transform:rotate(10deg) scaleX(-1)}
 .logo-title{background:linear-gradient(120deg,#365a3d 20%,#5d8a4e 55%,#a8873a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 3px 0 #dce8d4)}
-@media(max-width:540px){.logo-flower.lf1{left:-28px}.logo-flower.lf2{right:-28px}.logo-wrap{padding:44px 58px 38px}}
+@media(max-width:540px){.logo-flower.lf1{left:-28px}.logo-flower.lf2{right:-28px}.logo-wrap{padding:56px 74px 48px}}
 .board.spiral .board-cell{min-height:88px}
 .board-cell.flower-cell{background:linear-gradient(145deg,#f4f9ec,#e6f0da);padding:6px;justify-content:center}
 .board-cell.flower-cell .dokudami-svg{width:40px}
@@ -44,6 +44,21 @@ body.ura-mode .board-cell.event-cell{background:linear-gradient(145deg,#f8eded,#
 .mission-modal h2{font-size:1.45rem}
 .mission-modal #missionActions{margin:4px 0 14px}
 .mission-modal #missionActions:empty{margin:0}
+.board.zigzag .flower-cell .dokudami-svg{width:52px}
+.dice-fab{display:none}
+@media(max-width:850px){.dice-fab{display:grid;place-items:center;position:fixed;right:16px;bottom:16px;z-index:8;width:64px;height:64px;border-radius:50%;border:2px solid var(--line);background:var(--paper);font-size:1.7rem;box-shadow:0 10px 24px #30433430}}
+.dice-stage.big{height:176px}
+.dice-scene.big{width:120px;height:120px}
+.dice-scene.big .dice3d{width:120px;height:120px}
+.dice-scene.big .dface{border-radius:18px;padding:16px}
+.dice-scene.big .dface span.pip:after{width:19px;height:19px}
+.dice-scene.big .dface.fv1 span.pip:after{width:32px;height:32px}
+.dice-scene.big .fv1{transform:rotateY(0deg) translateZ(60px)}
+.dice-scene.big .fv2{transform:rotateY(90deg) translateZ(60px)}
+.dice-scene.big .fv3{transform:rotateX(90deg) translateZ(60px)}
+.dice-scene.big .fv4{transform:rotateX(-90deg) translateZ(60px)}
+.dice-scene.big .fv5{transform:rotateY(-90deg) translateZ(60px)}
+.dice-scene.big .fv6{transform:rotateY(180deg) translateZ(60px)}
 .mission-bar{display:none}
 @media(max-width:850px){.mission-bar{display:flex;gap:8px;align-items:baseline;position:sticky;top:8px;z-index:6;margin:10px 12px 0;padding:10px 14px;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);font-size:.8rem;line-height:1.5}.mission-bar-kicker{font-size:.6rem;letter-spacing:.14em;font-weight:900;color:var(--green);white-space:nowrap}.mission-bar-text{color:#69796a;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}}
 @keyframes sway{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}@keyframes roll{0%{transform:rotate(0) scale(1)}30%{transform:rotate(120deg) scale(.86)}65%{transform:rotate(280deg) scale(1.08)}100%{transform:rotate(360deg) scale(1)}}@keyframes spin{from{transform:rotate(0)}to{transform:rotate(1080deg)}}@media(max-width:850px){.game-layout{grid-template-columns:1fr}.control-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.dice-card{grid-row:span 2}.game-header{flex-wrap:wrap}.board-cell{min-height:86px}}@media(max-width:540px){.mode-grid{grid-template-columns:1fr}.mode-card{min-height:190px}.home-copy{margin:18px 0 28px}.game-header{align-items:flex-start}.player-count{display:none}.game-layout{padding:12px 10px 30px}.board{gap:5px}.board-cell{min-height:72px;padding:8px 3px;border-radius:10px}.cell-emoji{font-size:1.2rem}.cell-name{font-size:.62rem}.board-stamp{display:none}.control-panel{display:flex}.dice-card,.event-card,.mini-status{padding:17px}.board-panel{padding:12px}.board-heading h2{font-size:1rem}}
