@@ -171,6 +171,8 @@
           const patch=document.createElement("div");
           patch.className="board-cell flower-cell";
           patch.style.gridRowStart=r;patch.style.gridColumnStart=c;
+          patch.style.setProperty("--tilt",(Math.random()*16-8).toFixed(1)+"deg");
+          patch.style.setProperty("--fw",(46+Math.random()*26).toFixed(0)+"px");
           patch.innerHTML=dokudamiSvg();
           board.appendChild(patch);
         }
