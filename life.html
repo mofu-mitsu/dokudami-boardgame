@@ -18,11 +18,12 @@
       <div class="board-heading"><div><p class="eyebrow">YOUR STORY</p><h2>気ままな人生ロード</h2></div><span class="board-stamp">✨ LIFE GAME</span></div>
       <div class="board" id="lifeBoard" aria-label="人生ゲーム盤面"></div>
       <div class="board-legend"><span>🌱 START</span><span>🎁 EVENT</span><span>🏁 GOAL</span></div>
+      <div class="board-garden" id="boardGarden" aria-hidden="true"></div>
     </section>
     <aside class="control-panel">
       <section class="dice-card">
         <p class="eyebrow">ROLL & GO</p><h2>次は何が起きる？</h2>
-        <div class="dice-stage"><div class="dice" id="lifeDice" aria-label="サイコロの目">⚀</div></div>
+        <div class="dice-stage"><div class="dice-scene"><div class="dice3d" id="lifeDice" role="img" aria-label="サイコロ"></div></div></div>
         <button class="primary-button" id="lifeRollButton">🎲 サイコロを振る</button>
         <p class="small-note" id="lifeTurnStatus" aria-live="polite">人生は運しだい、のんびり行こう。</p>
         <button class="ghost-button" id="lifeResetButton" type="button">↩ 最初からやり直す</button>

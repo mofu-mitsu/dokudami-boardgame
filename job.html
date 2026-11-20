@@ -18,12 +18,13 @@
       <div class="board-heading"><div><p class="eyebrow">THE CAREER PATH</p><h2>社会人への道（？）</h2></div><span class="board-stamp">🌿 DOKUDAMI</span></div>
       <div class="board" id="jobBoard" aria-label="すごろく盤面"></div>
       <div class="board-legend"><span>🌱 START</span><span>🌼 EVENT</span><span>🏁 GOAL</span></div>
+      <div class="board-garden" id="boardGarden" aria-hidden="true"></div>
     </section>
     <aside class="control-panel">
       <section class="dice-card">
         <p class="eyebrow">YOUR TURN</p>
         <h2>サイコロを振ろう</h2>
-        <div class="dice-stage"><div class="dice" id="dice" aria-label="サイコロの目">⚀</div></div>
+        <div class="dice-stage"><div class="dice-scene"><div class="dice3d" id="dice" role="img" aria-label="サイコロ"></div></div></div>
         <button class="primary-button" id="rollButton">🎲 サイコロを振る</button>
         <p class="small-note" id="turnStatus" aria-live="polite">スタート地点から出発！</p>
         <button class="ghost-button" id="resetButton" type="button">↩ 最初からやり直す</button>
