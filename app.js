@@ -108,16 +108,28 @@
   const lifeSpaces = [
     ["START","🌱","人生スタート"],["趣味","🎨","好きな趣味を満喫"],["おこづかい","🪙","臨時収入ゲット"],["お買い物","🛍️","欲しかったものを購入"],["休日","🌷","のんびり休息"],["新しい出会い","🐾","素敵な出会い"],["ラッキー","🍀","思いがけない幸運"],["お仕事","💼","新しいことに挑戦"],["ごほうび","🍰","自分にごほうび"],["GOAL","🏁","自分らしい人生！"]
   ];
-  function renderBoard(id, spaces, position) {
+  const jobPath = [[5,1],[4,1],[3,1],[2,1],[1,1],[1,2],[1,3],[1,4],[1,5],[2,5],[3,5],[4,5],[5,5],[5,4],[5,3],[5,2],[4,2],[3,2],[2,2],[2,3],[2,4],[3,4],[3,3]];
+  const lifePath = [[1,1],[1,2],[1,3],[1,4],[1,5],[2,5],[2,4],[2,3],[2,2],[2,1]];
+  function renderBoard(id, spaces, position, path) {
     const board=$(id); if(!board)return;
     board.innerHTML="";
     spaces.forEach((space,i)=>{
       const cell=document.createElement("div");
-      cell.className="board-cell"+(i===0?" start-cell":"")+(i===spaces.length-1?" goal-cell":"")+(i===position?" current-cell":"");
+      cell.className="board-cell"+(i===0?" start-cell":"")+(i===spaces.length-1?" goal-cell":"")+(i===position?" current-cell":"")+(space[3]?" event-cell":"");
       cell.innerHTML=`<span class="cell-num">${String(i).padStart(2,"0")}</span><span class="cell-emoji">${space[1]}</span><span class="cell-name">${space[0]}</span>`;
       cell.title=space[2];
+      if(path&&path[i]){cell.style.gridRowStart=path[i][0];cell.style.gridColumnStart=path[i][1];}
       board.appendChild(cell);
     });
+    if(id==="jobBoard"){
+      [[4,3],[4,4]].forEach((pos)=>{
+        const patch=document.createElement("div");
+        patch.className="board-cell flower-cell";
+        patch.style.gridRowStart=pos[0];patch.style.gridColumnStart=pos[1];
+        patch.innerHTML=dokudamiSvg();
+        board.appendChild(patch);
+      });
+    }
   }
   const job = {position:0,busy:false,skip:false};
   const life = {position:0,busy:false};
@@ -126,6 +138,8 @@
     if($("eventTitle"))$("eventTitle").textContent=title;
     if($("eventText"))$("eventText").textContent=text;
     if($("eventActions"))$("eventActions").innerHTML=actions;
+    if($("missionBarTitle"))$("missionBarTitle").textContent=title;
+    if($("missionBarText"))$("missionBarText").textContent=text;
   }
   function bindJobActions() {
     const box=$("eventActions"); if(!box)return;
@@ -142,7 +156,7 @@
     });
   }
   function updateJob() {
-    renderBoard("jobBoard",jobBoardSpaces,job.position);
+    renderBoard("jobBoard",jobBoardSpaces,job.position,jobPath);
     const last=jobLast();
     if($("positionText"))$("positionText").textContent=job.position===0?"START / 0":job.position===last?`GOAL / ${last}`:`マス ${job.position} / ${last}`;
     if($("progressBar"))$("progressBar").style.width=(job.position/last*100)+"%";
@@ -239,7 +253,7 @@
 
   const lifeButton=$("lifeRollButton");
   buildDice($("lifeDice"));
-  function updateLife(){renderBoard("lifeBoard",lifeSpaces,life.position);if($("lifePositionText"))$("lifePositionText").textContent=life.position===0?"START / 0":life.position===9?"GOAL / 9":`マス ${life.position} / 9`;if($("lifeProgressBar"))$("lifeProgressBar").style.width=(life.position/9*100)+"%";}
+  function updateLife(){renderBoard("lifeBoard",lifeSpaces,life.position,lifePath);if($("lifePositionText"))$("lifePositionText").textContent=life.position===0?"START / 0":life.position===9?"GOAL / 9":`マス ${life.position} / 9`;if($("lifeProgressBar"))$("lifeProgressBar").style.width=(life.position/9*100)+"%";}
   if(lifeButton)lifeButton.addEventListener("click",()=>{
     if(life.busy||life.position>=9)return;life.busy=true;lifeButton.disabled=true;
     const n=Math.floor(Math.random()*6)+1;
@@ -253,6 +267,8 @@
       const s=lifeSpaces[life.position];
       $("lifeEventTitle").textContent=s[0];
       $("lifeEventText").textContent=life.position===9?"ゴール！自分らしい人生を楽しもう！":s[2]+"！";
+      if($("lifeMissionBarTitle"))$("lifeMissionBarTitle").textContent=s[0];
+      if($("lifeMissionBarText"))$("lifeMissionBarText").textContent=$("lifeEventText").textContent;
       $("lifeTurnStatus").textContent=bounced?`${n}が出た！ ゴールを行き過ぎて ${raw-landed}マス戻った`:`${n}マス進んだ！`;
       life.busy=false;lifeButton.disabled=life.position>=9;
     });
@@ -264,6 +280,8 @@
     const d=$("lifeDice");if(d)d.style.transform=diceTransforms[0];
     if($("lifeEventTitle"))$("lifeEventTitle").textContent="新しい人生のスタート！";
     if($("lifeEventText"))$("lifeEventText").textContent="サイコロを振って、いろんなイベントに出会おう。";
+    if($("lifeMissionBarTitle"))$("lifeMissionBarTitle").textContent="新しい人生のスタート！";
+    if($("lifeMissionBarText"))$("lifeMissionBarText").textContent="サイコロを振って、いろんなイベントに出会おう。";
     if($("lifeTurnStatus"))$("lifeTurnStatus").textContent="人生は運しだい、のんびり行こう。";
     const g=$("boardGarden");if(g)g.innerHTML="";
     if(lifeButton)lifeButton.disabled=false;
